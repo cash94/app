@@ -617,12 +617,53 @@
                 checkTimer = setTimeout(check, 600);
             }
 
+            /* Адрес в домашней сети: 10/8, 172.16/12, 192.168/16, 127/8,
+               169.254/16, localhost, *.local, IPv6 ::1 / fc00::/7 / fe80::/10 */
+            function isLocalUrl(u) {
+                var m = /^[a-z][a-z0-9+.\-]*:\/\/(?:[^\/@]*@)?(\[[^\]]+\]|[^\/:?#]+)/i.exec(u);
+                if (!m) return false;
+                var h = m[1].toLowerCase();
+                if (h === 'localhost' || /\.local$/.test(h) || /\.localhost$/.test(h)) return true;
+                if (h.charAt(0) === '[') return /^\[(::1|f[cd]|fe[89ab])/.test(h);
+                var p = /^(\d+)\.(\d+)\.\d+\.\d+$/.exec(h);
+                if (!p) return false;
+                var a = +p[1], b = +p[2];
+                return a === 10 || a === 127 || (a === 172 && b >= 16 && b <= 31) ||
+                    (a === 192 && b === 168) || (a === 169 && b === 254);
+            }
+
+            /* Новый Chrome (Local Network Access) не пускает страницу из
+               интернета, открытую по http, в домашнюю сеть: запрос падает с
+               ошибкой CORS, хотя сервер жив. Переход по ссылке при этом
+               работает. Проверить такой адрес нельзя — рамку оставляем
+               нейтральной. На старых движках (VIDAA) permissions нет, и проверка
+               идёт как обычно. */
+            var lnaState = null; /* null — ещё не спрашивали, '' — API нет */
+            function withLna(cb) {
+                if (lnaState !== null) { cb(lnaState); return; }
+                var done = function (s) { lnaState = s; cb(s); };
+                try {
+                    if (!navigator.permissions || !navigator.permissions.query) { done(''); return; }
+                    navigator.permissions.query({ name: 'local-network-access' })
+                        .then(function (r) { done(r.state); }, function () { done(''); });
+                } catch (e) { done(''); }
+            }
+
             function check() {
                 var u = norm(urlInput.value);
                 if (!u) { setStatus(''); return; }
                 if (chkXhr) { try { chkXhr.abort(); } catch (e) { } chkXhr = null; }
+                clearTimeout(chkTo);
                 if (!window.XMLHttpRequest) { setStatus(''); return; }
+                if (!isLocalUrl(u)) { probe(u); return; }
+                withLna(function (s) {
+                    if (norm(urlInput.value) !== u) return; /* адрес уже сменили */
+                    if (s === 'denied') setStatus('');
+                    else probe(u);
+                });
+            }
 
+            function probe(u) {
                 setStatus('checking');
                 chkXhr = new XMLHttpRequest();
                 chkTo = setTimeout(function () {

@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>TorrStream</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            background: #0b1020;
+            color: #e9eef7;
+            font-family: -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+            -webkit-user-select: none;
+            user-select: none;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* анимированный фон */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            -webkit-filter: blur(100px);
+            filter: blur(100px);
+            opacity: .5;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .orb1 {
+            width: 800px;
+            height: 800px;
+            background: #2a1a3a;
+            top: -200px;
+            left: -200px;
+            -webkit-animation: drift1 25s ease-in-out infinite alternate;
+            animation: drift1 25s ease-in-out infinite alternate;
+        }
+
+        .orb2 {
+            width: 700px;
+            height: 700px;
+            background: #3a1a1a;
+            bottom: -150px;
+            right: -150px;
+            -webkit-animation: drift2 30s ease-in-out infinite alternate;
+            animation: drift2 30s ease-in-out infinite alternate;
+        }
+
+        .orb3 {
+            width: 600px;
+            height: 600px;
+            background: #1a2a3a;
+            top: 50%;
+            left: 50%;
+            margin-left: -300px;
+            margin-top: -300px;
+            -webkit-animation: drift3 20s ease-in-out infinite alternate;
+            animation: drift3 20s ease-in-out infinite alternate;
+        }
+
+        @-webkit-keyframes drift1 {
+            0% {
+                -webkit-transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                -webkit-transform: translate(300px, 200px) scale(1.1);
+            }
+
+            66% {
+                -webkit-transform: translate(-100px, 400px) scale(.9);
+            }
+
+            100% {
+                -webkit-transform: translate(200px, 100px) scale(1.05);
+            }
+        }
+
+        @keyframes drift1 {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                transform: translate(300px, 200px) scale(1.1);
+            }
+
+            66% {
+                transform: translate(-100px, 400px) scale(.9);
+            }
+
+            100% {
+                transform: translate(200px, 100px) scale(1.05);
+            }
+        }
+
+        @-webkit-keyframes drift2 {
+            0% {
+                -webkit-transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                -webkit-transform: translate(-400px, -200px) scale(.9);
+            }
+
+            66% {
+                -webkit-transform: translate(200px, -300px) scale(1.1);
+            }
+
+            100% {
+                -webkit-transform: translate(-150px, -100px) scale(.95);
+            }
+        }
+
+        @keyframes drift2 {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                transform: translate(-400px, -200px) scale(.9);
+            }
+
+            66% {
+                transform: translate(200px, -300px) scale(1.1);
+            }
+
+            100% {
+                transform: translate(-150px, -100px) scale(.95);
+            }
+        }
+
+        @-webkit-keyframes drift3 {
+            0% {
+                -webkit-transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                -webkit-transform: translate(-200px, 300px) scale(1.15);
+            }
+
+            66% {
+                -webkit-transform: translate(300px, -200px) scale(.85);
+            }
+
+            100% {
+                -webkit-transform: translate(100px, 150px) scale(1.1);
+            }
+        }
+
+        @keyframes drift3 {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                transform: translate(-200px, 300px) scale(1.15);
+            }
+
+            66% {
+                transform: translate(300px, -200px) scale(.85);
+            }
+
+            100% {
+                transform: translate(100px, 150px) scale(1.1);
+            }
+        }
+
+        .stage {
+            position: relative;
+            z-index: 1;
+            display: table;
+            width: 100%;
+            height: 100%;
+        }
+
+        .stage-in {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .card {
+            display: inline-block;
+            width: 92%;
+            max-width: 440px;
+            text-align: left;
+            background: rgba(22, 28, 45, .72);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 20px;
+            padding: 36px 34px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, .55), 0 0 0 1px rgba(255, 255, 255, .02) inset;
+            -webkit-backdrop-filter: blur(14px);
+            backdrop-filter: blur(14px);
+            -webkit-animation: pop .3s ease;
+            animation: pop .3s ease;
+        }
+
+        @-webkit-keyframes pop {
+            from {
+                -webkit-transform: translateY(14px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes pop {
+            from {
+                transform: translateY(14px);
+                opacity: 0;
+            }
+        }
+
+        .title {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -.3px;
+        }
+
+        .title .acc {
+            color: #ff9a4a;
+        }
+
+        .subtitle {
+            margin-top: 6px;
+            font-size: 14px;
+            color: #8b98ab;
+        }
+
+        .field {
+            margin-top: 26px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 12px;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: #8b98ab;
+            margin-bottom: 8px;
+        }
+
+        .inp {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 16px;
+            color: #e9eef7;
+            background: #0f1526;
+            border: 1.5px solid #2a344a;
+            border-radius: 12px;
+            outline: none;
+            -webkit-transition: border-color .15s, box-shadow .15s;
+            transition: border-color .15s, box-shadow .15s;
+        }
+
+        .inp:focus {
+            border-color: #ff9a4a;
+            box-shadow: 0 0 0 4px rgba(255, 154, 74, .15);
+        }
+
+        .inp.invalid {
+            border-color: #ff5d5d;
+            -webkit-animation: shake .25s;
+            animation: shake .25s;
+        }
+
+        @-webkit-keyframes shake {
+            25% {
+                -webkit-transform: translateX(-5px);
+            }
+
+            75% {
+                -webkit-transform: translateX(5px);
+            }
+        }
+
+        @keyframes shake {
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        /* мигание рамки поля по статусу сервера */
+        .inp.checking {
+            -webkit-animation: blinkCheck .9s ease-in-out infinite;
+            animation: blinkCheck .9s ease-in-out infinite;
+        }
+
+        @-webkit-keyframes blinkCheck {
+
+            0%,
+            100% {
+                border-color: #fbbf24;
+                box-shadow: 0 0 0 4px rgba(251, 191, 36, .22);
+            }
+
+            50% {
+                border-color: rgba(251, 191, 36, .35);
+                box-shadow: 0 0 0 4px rgba(251, 191, 36, .05);
+            }
+        }
+
+        @keyframes blinkCheck {
+
+            0%,
+            100% {
+                border-color: #fbbf24;
+                box-shadow: 0 0 0 4px rgba(251, 191, 36, .22);
+            }
+
+            50% {
+                border-color: rgba(251, 191, 36, .35);
+                box-shadow: 0 0 0 4px rgba(251, 191, 36, .05);
+            }
+        }
+
+        .inp.ok {
+            -webkit-animation: blinkOk 1.2s ease-in-out infinite;
+            animation: blinkOk 1.2s ease-in-out infinite;
+        }
+
+        @-webkit-keyframes blinkOk {
+
+            0%,
+            100% {
+                border-color: #4ade80;
+                box-shadow: 0 0 0 4px rgba(74, 222, 128, .28);
+            }
+
+            50% {
+                border-color: rgba(74, 222, 128, .4);
+                box-shadow: 0 0 0 4px rgba(74, 222, 128, .08);
+            }
+        }
+
+        @keyframes blinkOk {
+
+            0%,
+            100% {
+                border-color: #4ade80;
+                box-shadow: 0 0 0 4px rgba(74, 222, 128, .28);
+            }
+
+            50% {
+                border-color: rgba(74, 222, 128, .4);
+                box-shadow: 0 0 0 4px rgba(74, 222, 128, .08);
+            }
+        }
+
+        .inp.bad {
+            -webkit-animation: blinkBad 1.2s ease-in-out infinite;
+            animation: blinkBad 1.2s ease-in-out infinite;
+        }
+
+        @-webkit-keyframes blinkBad {
+
+            0%,
+            100% {
+                border-color: #f87171;
+                box-shadow: 0 0 0 4px rgba(248, 113, 113, .28);
+            }
+
+            50% {
+                border-color: rgba(248, 113, 113, .4);
+                box-shadow: 0 0 0 4px rgba(248, 113, 113, .08);
+            }
+        }
+
+        @keyframes blinkBad {
+
+            0%,
+            100% {
+                border-color: #f87171;
+                box-shadow: 0 0 0 4px rgba(248, 113, 113, .28);
+            }
+
+            50% {
+                border-color: rgba(248, 113, 113, .4);
+                box-shadow: 0 0 0 4px rgba(248, 113, 113, .08);
+            }
+        }
+
+        .chk {
+            display: block;
+            margin-top: 22px;
+            cursor: pointer;
+            outline: none;
+            padding: 6px 4px;
+        }
+
+        .chk-box {
+            display: inline-block;
+            vertical-align: middle;
+            width: 22px;
+            height: 22px;
+            border-radius: 7px;
+            background: #0f1526;
+            border: 1.5px solid #2a344a;
+            position: relative;
+            -webkit-transition: background .15s, border-color .15s;
+            transition: background .15s, border-color .15s;
+        }
+
+        .chk-box:after {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 2px;
+            width: 6px;
+            height: 12px;
+            border: solid #fff;
+            border-width: 0 2.5px 2.5px 0;
+            -webkit-transform: rotate(45deg) scale(0);
+            transform: rotate(45deg) scale(0);
+            -webkit-transition: -webkit-transform .15s;
+            transition: transform .15s;
+        }
+
+        .chk.on .chk-box {
+            background: #ff9a4a;
+            border-color: #ff9a4a;
+        }
+
+        .chk.on .chk-box:after {
+            -webkit-transform: rotate(45deg) scale(1);
+            transform: rotate(45deg) scale(1);
+        }
+
+        .chk:focus .chk-box {
+            box-shadow: 0 0 0 4px rgba(255, 154, 74, .25);
+        }
+
+        .chk-name {
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 12px;
+            font-size: 15px;
+            color: #dfe7f3;
+        }
+
+        .go {
+            display: block;
+            width: 100%;
+            margin-top: 28px;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: .3px;
+            color: #1a0a00;
+            background: #ff9a4a;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            outline: none;
+            -webkit-transition: -webkit-transform .15s, box-shadow .15s, background .15s;
+            transition: transform .15s, box-shadow .15s, background .15s;
+        }
+
+        .go:hover {
+            -webkit-transform: translateY(-1px);
+            transform: translateY(-1px);
+            background: #ffae66;
+        }
+
+        .go:focus {
+            box-shadow: 0 0 0 4px rgba(255, 154, 74, .35);
+            background: #ffae66;
+        }
+
+        .autogo {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 40;
+            background: rgba(6, 10, 18, .93);
+            text-align: center;
+        }
+
+        .autogo[hidden] {
+            display: none;
+        }
+
+        .ag-box {
+            display: inline-block;
+            margin-top: 18%;
+        }
+
+        .ag-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #dfe7f3;
+        }
+
+        .ag-count {
+            font-size: 110px;
+            font-weight: 800;
+            color: #ff9a4a;
+            line-height: 1.15;
+            margin-top: 10px;
+        }
+
+        .ag-url {
+            margin-top: 4px;
+            font-size: 16px;
+            color: #8b98ab;
+            word-break: break-all;
+        }
+
+        .ag-hint {
+            margin-top: 24px;
+            font-size: 13px;
+            color: #67789a;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+
+    <div class="stage">
+        <div class="stage-in">
+            <form class="card" id="form" autocomplete="off" onsubmit="return false;">
+                <div class="title">Torr<span class="acc">Stream</span></div>
+                <div class="subtitle">Введите адрес сервера, чтобы продолжить</div>
+
+                <div class="field">
+                    <label for="urlInput">Адрес сервера</label>
+                    <input class="inp" id="urlInput" type="text" placeholder="http://192.168.0.10:3000">
+                </div>
+
+                <div class="chk" id="autoChk" tabindex="0">
+                    <span class="chk-box"></span>
+                    <span class="chk-name">Автовход</span>
+                </div>
+
+                <button class="go" id="goBtn" type="button">Продолжить</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="autogo" id="autogo" hidden>
+        <div class="ag-box">
+            <div class="ag-title">Автовход в TorrStream</div>
+            <div class="ag-count" id="agCount">3</div>
+            <div class="ag-url" id="agUrl"></div>
+            <div class="ag-hint">Нажмите любую клавишу, чтобы отменить</div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            'use strict';
+
+            var LS_URL = 'torrstream_last_url';
+            var LS_AUTO = 'torrstream_auto_login';
+
+            function $(id) { return document.getElementById(id); }
+            var urlInput = $('urlInput');
+            var autoChk = $('autoChk');
+            var goBtn = $('goBtn');
+            var autogo = $('autogo');
+            var agCount = $('agCount');
+            var agUrl = $('agUrl');
+
+            var autoOn = false;
+            var agTimer = null;
+            var agLeft = 3;
+            var agTarget = '';
+            var checkTimer = null;
+            var chkXhr = null;
+            var chkTo = null;
+
+            /* ---------- localStorage ---------- */
+            function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+            function save(k, v) { try { localStorage.setItem(k, v); } catch (e) { } }
+
+            /* ---------- утилиты ---------- */
+            function trim(s) { return String(s).replace(/^\s+|\s+$/g, ''); }
+            function norm(v) {
+                v = trim(v);
+                if (!v) return '';
+                if (!/^[a-z][a-z0-9+.\-]*:\/\//i.test(v)) v = 'http://' + v;
+                return v;
+            }
+            function prevent(e) { if (e.preventDefault) e.preventDefault(); else e.returnValue = false; }
+            function setText(el, s) { el.innerHTML = ''; el.appendChild(document.createTextNode(s)); }
+            function indexOf(arr, x) { for (var i = 0; i < arr.length; i++) if (arr[i] === x) return i; return -1; }
+
+            /* ---------- статус сервера: мигание рамки поля ---------- */
+            function setStatus(kind) {
+                urlInput.className = 'inp' + (kind ? ' ' + kind : '');
+            }
+
+            function scheduleCheck() {
+                clearTimeout(checkTimer);
+                if (!trim(urlInput.value)) { setStatus(''); return; }
+                checkTimer = setTimeout(check, 600);
+            }
+
+            function check() {
+                var u = norm(urlInput.value);
+                if (!u) { setStatus(''); return; }
+                if (chkXhr) { try { chkXhr.abort(); } catch (e) { } chkXhr = null; }
+                if (!window.XMLHttpRequest) { setStatus(''); return; }
+
+                setStatus('checking');
+                chkXhr = new XMLHttpRequest();
+                chkTo = setTimeout(function () {
+                    try { chkXhr.abort(); } catch (e) { }
+                    chkXhr = null;
+                    setStatus('bad');
+                }, 6000);
+
+                try {
+                    chkXhr.open('GET', u, true);
+                    chkXhr.onreadystatechange = function () {
+                        if (chkXhr && chkXhr.readyState === 4) {
+                            clearTimeout(chkTo);
+                            var s = 0; try { s = chkXhr.status; } catch (e) { }
+                            setStatus(s > 0 ? 'ok' : 'bad');
+                            chkXhr = null;
+                        }
+                    };
+                    chkXhr.send(null);
+                } catch (e) {
+                    clearTimeout(chkTo);
+                    setStatus('bad');
+                    chkXhr = null;
+                }
+            }
+
+            /* ---------- чекбокс ---------- */
+            function applyAuto() {
+                autoChk.className = 'chk' + (autoOn ? ' on' : '');
+            }
+            function toggleAuto() {
+                autoOn = !autoOn;
+                applyAuto();
+                save(LS_AUTO, autoOn ? '1' : '0');
+            }
+
+            /* ---------- продолжить ---------- */
+            function go() {
+                var u = norm(urlInput.value);
+                if (!u) {
+                    urlInput.className = 'inp invalid';
+                    try { urlInput.focus(); } catch (e) { }
+                    return;
+                }
+                urlInput.className = 'inp';
+                save(LS_URL, u);
+                save(LS_AUTO, autoOn ? '1' : '0');
+                window.location.href = u;
+            }
+
+            /* ---------- автовход ---------- */
+            function startAutoGo(u) {
+                agTarget = u; agLeft = 3;
+                setText(agUrl, u);
+                setText(agCount, '3');
+                autogo.hidden = false;
+                agTimer = setTimeout(tick, 1000);
+            }
+            function tick() {
+                agLeft--;
+                if (agLeft <= 0) { autogo.hidden = true; window.location.href = agTarget; return; }
+                setText(agCount, String(agLeft));
+                agTimer = setTimeout(tick, 1000);
+            }
+            function cancelAuto() {
+                clearTimeout(agTimer);
+                autogo.hidden = true;
+                try { urlInput.focus(); } catch (e) { }
+            }
+
+            /* ---------- события ---------- */
+            function onUrlInput() {
+                urlInput.className = 'inp';
+                scheduleCheck();
+            }
+            urlInput.oninput = onUrlInput;
+            urlInput.onkeyup = onUrlInput;
+
+            autoChk.onclick = toggleAuto;
+            goBtn.onclick = go;
+            autogo.onclick = cancelAuto;
+
+            /* ---------- клавиатура ---------- */
+            var KEYCODES = {
+                37: 'left', 38: 'up', 39: 'right', 40: 'down', 13: 'enter', 27: 'esc',
+                4: 'left', 5: 'right', 29460: 'up', 29461: 'down', 29435: 'enter'
+            };
+            function normKey(e) {
+                switch (e.key) {
+                    case 'ArrowLeft': case 'Left': return 'left';
+                    case 'ArrowUp': case 'Up': return 'up';
+                    case 'ArrowRight': case 'Right': return 'right';
+                    case 'ArrowDown': case 'Down': return 'down';
+                    case 'Enter': return 'enter';
+                    case 'Escape': case 'Esc': return 'esc';
+                }
+                return KEYCODES[e.keyCode] || KEYCODES[e.which] || '';
+            }
+            function focusables() { return [urlInput, autoChk, goBtn]; }
+
+            document.addEventListener('keydown', function (e) {
+                var k = normKey(e);
+                if (!k) return;
+
+                if (!autogo.hidden) { prevent(e); cancelAuto(); return; }
+
+                if (k === 'up' || k === 'down') {
+                    prevent(e);
+                    var order = focusables();
+                    var i = indexOf(order, document.activeElement);
+                    if (i === -1) i = 0;
+                    else i = (i + (k === 'down' ? 1 : order.length - 1)) % order.length;
+                    try { order[i].focus(); } catch (err) { }
+                    return;
+                }
+
+                if (k === 'enter') {
+                    var a = document.activeElement;
+                    if (a === autoChk) { prevent(e); toggleAuto(); }
+                    else if (a === goBtn) { prevent(e); go(); }
+                    else if (a === urlInput) { prevent(e); go(); }
+                }
+            });
+
+            /* ---------- инициализация ---------- */
+            var savedUrl = norm(load(LS_URL) || '');
+            var savedAuto = load(LS_AUTO);
+            urlInput.value = load(LS_URL) || '';
+            autoOn = (savedAuto === '1');
+            applyAuto();
+
+            if (savedUrl && autoOn) {
+                startAutoGo(savedUrl);
+            } else {
+                if (savedUrl) check();
+                try { urlInput.focus(); } catch (e) { }
+            }
+        })();
+    </script>
+</body>
+
+</html>
